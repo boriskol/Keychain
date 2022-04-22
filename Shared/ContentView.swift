@@ -22,12 +22,9 @@ struct ContentView: View {
        .onAppear{
           Task {
               //When `purchasedIdentifiers` changes, get the latest subscription status.
-             //if let use = keychain.user{
+             
              try await keychain.exists(account: "username")
              try await keychain.get(account: "username")
-             //}else{
-                //try await keychain.get(account: "username")
-             //}
           }
           
        }
