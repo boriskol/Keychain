@@ -21,7 +21,7 @@ class Keychain: ObservableObject {
    init() {
       Task {
          //Initialize the store by starting a product request.
-         try await add(value: UUID().uuidString.data(using: .utf8)!, account: "username")
+         //try await add(value: UUID().uuidString.data(using: .utf8)!, account: "username")
       }
    }
 
@@ -37,10 +37,8 @@ class Keychain: ObservableObject {
             ] as NSDictionary, &result)
         if status == errSecSuccess {
            self.haveUser = true
-           if result != nil{
-              let stringValue = String(decoding: (result as? Data)!, as: UTF8.self)
-              self.user = stringValue//result as? Data
-           }
+           try await get(account: "username")
+           
         } else if status == errSecItemNotFound {
            self.haveUser = false
            self.user = nil
@@ -78,11 +76,11 @@ class Keychain: ObservableObject {
             kSecValueData: value,
             ] as NSDictionary, &result)
       if status == errSecSuccess {
-         self.haveUser = true
-         if result != nil{
-            let stringValue = String(decoding: (result as? Data)!, as: UTF8.self)
-            self.user = stringValue//result as? Data
-         }
+         //self.haveUser = true
+         debugPrint(result.debugDescription)
+         
+         try await get(account: "username")
+         
       } else if status == errSecItemNotFound {
          self.haveUser = false
          self.user = nil
@@ -137,10 +135,10 @@ class Keychain: ObservableObject {
             ] as NSDictionary, &result)
         if status == errSecSuccess {
            self.haveUser = true
-           if result != nil{
+           //if result != nil{
               let stringValue = String(decoding: (result as? Data)!, as: UTF8.self)
               self.user = stringValue//result as? Data
-           }
+           //}
         } else if status == errSecItemNotFound {
            self.haveUser = false
            self.user = nil
@@ -158,7 +156,9 @@ class Keychain: ObservableObject {
             kSecAttrService: service,
             ] as NSDictionary)
        if status == errSecSuccess {
-          self.haveUser = true
+          debugPrint("delete user errSecSuccess")
+          self.haveUser = false
+          self.user = nil
        } else if status == errSecItemNotFound {
           self.haveUser = false
           self.user = nil
@@ -174,7 +174,9 @@ class Keychain: ObservableObject {
             kSecClass: kSecClassGenericPassword,
             ] as NSDictionary)
        if status == errSecSuccess {
-          self.haveUser = true
+          self.haveUser = false
+          debugPrint("delete user errSecSuccess")
+          self.user = nil
        } else if status == errSecItemNotFound {
           self.haveUser = false
           self.user = nil
